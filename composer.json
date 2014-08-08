@@ -13,7 +13,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url":  "git@github.com::plazmdk/tsCMSSystemBundle.git"
+            "url":  "git@github.com:plazmdk/tsCMSSystemBundle.git"
         }
     ]
 }
