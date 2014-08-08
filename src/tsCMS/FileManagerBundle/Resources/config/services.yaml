@@ -1,0 +1,6 @@
+services:
+    tsCMS_filemanager.filemanagerservice:
+        class: tsCMS\FileManagerBundle\Services\FileManagerService
+        arguments: [ @doctrine.orm.entity_manager, @router ]
+        tags:
+            - { name: kernel.event_listener, event: tsCMS.buildSiteStructure, method: onBuildSitestructure, priority: 0 }

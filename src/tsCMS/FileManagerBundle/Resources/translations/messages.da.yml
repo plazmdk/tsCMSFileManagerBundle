@@ -1,0 +1,8 @@
+filemanager:
+  uploadFiles: Upload filer til mappe
+  chooseFiles: Vælg filer til upload
+  upload: Upload filer
+  name: Filarkiv
+
+  createDirectory: Opret mappe
+  directory: Mappenavn
