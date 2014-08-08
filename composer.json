@@ -1,0 +1,13 @@
+{
+    "name": "tsCMS/FileManagerBundle",
+    "autoload": {
+        "psr-0" : {
+            "tsCMS\\FileManagerBundle" : "src"
+        }
+    },
+    "require": {
+        "tsCMS/SystemBundle": "*",
+        "symfony/finder": "*",
+        "symfony/filesystem": "*"
+    }
+}
