@@ -9,5 +9,11 @@
         "tsCMS/SystemBundle": "*",
         "symfony/finder": "*",
         "symfony/filesystem": "*"
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "git@github.com::plazmdk/tsCMSSystemBundle.git"
+        }
+    ]
 }
