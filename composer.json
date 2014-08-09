@@ -6,7 +6,7 @@
         }
     },
     "require": {
-        "tscms/system": "*",
+        "tscms/system": "dev-master",
         "symfony/finder": "*",
         "symfony/filesystem": "*"
     },
