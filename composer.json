@@ -1,19 +1,19 @@
 {
-    "name": "tsCMS/FileManagerBundle",
+    "name": "tscms/filemanager",
     "autoload": {
         "psr-0" : {
             "tsCMS\\FileManagerBundle" : "src"
         }
     },
     "require": {
-        "tsCMS/SystemBundle": "*",
+        "tscms/system": "*",
         "symfony/finder": "*",
         "symfony/filesystem": "*"
     },
     "repositories": [
         {
             "type": "vcs",
-            "url":  "git@github.com:plazmdk/tsCMSSystemBundle.git"
+            "url":  "https://github.com/plazmdk/tsCMSSystemBundle"
         }
     ]
 }
