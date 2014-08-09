@@ -15,5 +15,11 @@
             "type": "vcs",
             "url":  "https://github.com/plazmdk/tsCMSSystemBundle"
         }
-    ]
+    ],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1-dev"
+        }
+    },
+    "minimum-stability": "dev"
 }
