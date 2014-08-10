@@ -5,6 +5,7 @@
             "tsCMS\\FileManagerBundle" : ""
         }
     },
+    "target-dir": "tsCMS/FileManagerBundle",
     "require": {
         "tscms/system": "dev-master",
         "symfony/finder": "*",
