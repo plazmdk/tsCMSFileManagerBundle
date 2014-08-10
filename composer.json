@@ -2,7 +2,7 @@
     "name": "tscms/filemanager",
     "autoload": {
         "psr-0" : {
-            "tsCMS\\FileManagerBundle" : "src"
+            "tsCMS\\FileManagerBundle" : ""
         }
     },
     "require": {
