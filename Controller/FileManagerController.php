@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -129,7 +130,7 @@ class FileManagerController extends Controller
         $locator = new Finder();
         $locator->files()->in($webPath."/upload")->name('/.*\.(jpg|gif|png)/i');
 
-        foreach ($locator as $image) {
+        foreach ($locator as $image) { /** @var $image SplFileInfo */
             $images[] = array(
                 "thumb" => "/upload/".$image->getRelativePathname(),
                 "image" => "/upload/".$image->getRelativePathname(),
@@ -143,5 +144,59 @@ class FileManagerController extends Controller
 
     public function createDirectoryAction() {
 
+    }
+
+    /**
+     * @Route("/list.json", name="tscms_filemanager_filepicker_list", options={"expose"=true})
+     * @Secure("ROLE_ADMIN")
+     */
+    public function listAction(Request $request) {
+        $folder = $request->query->get("folder","/");
+        $selectedFiles = $request->query->get("selectedFiles",array());
+        $imagesOnly = $request->query->get("imagesOnly",false);
+
+        $webPath = realpath($this->get('kernel')->getRootDir() . '/../web/upload');
+        $directories = array();
+        $files = array();
+
+        $locator = new Finder();
+        $locator->depth(0);
+        $locator->in($webPath.$folder);
+
+        foreach ($locator as $file) { /** @var $file SplFileInfo */
+            if ($file->isDir()) {
+                $directories[] = array(
+                    "selected" => in_array(str_replace($webPath, "", $file->getPathname()), $selectedFiles),
+                    "type" => 'folder',
+                    "path" => str_replace($webPath, "", $file->getPathname()),
+                    "title" => $file->getFilename()
+                );
+            } else {
+                $valid = true;
+                $image = false;
+
+                $name = $file->getFilename();
+                if (preg_match('/.*\.(jpg|gif|png)/i', $name) !== 0) {
+                    $image = true;
+                } elseif ($imagesOnly) {
+                    $valid = false;
+                }
+
+                if ($valid) {
+                    $files[] = array(
+                        "selected" => in_array(str_replace($webPath, "", $file->getPathname()), $selectedFiles),
+                        "type" => $image ? 'image' : 'file',
+                        "path" => str_replace($webPath, "", $file->getPathname()),
+                        "title" => $file->getFilename()
+                    );
+                }
+
+            }
+        }
+
+        return new JsonResponse(array(
+            "directories" => $directories,
+            "files" => $files
+        ));
     }
 }

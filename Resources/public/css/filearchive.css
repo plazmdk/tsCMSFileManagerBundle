@@ -2,28 +2,70 @@
     margin: 20px 0;
 }
 
+.filepicker-content .directory,
+.filepicker-content .file,
 .filearchive .directory,
 .filearchive .file {
     display: inline-block;
     text-align: center;
     width: 120px;
     margin: 10px;
+    padding: 10px;
     vertical-align: top;
+    border-radius: 5px;
+    cursor: pointer;
 }
-
+.filepicker-content .fa,
 .filearchive .fa {
     display: block;
     font-size: 64px;
 }
 
+.filepicker-content .file span,
 .filearchive .file span {
     height: 64px;
     display: block;
 }
+.filepicker-content .file span img,
 .filearchive .file span img {
     max-width: 100%;
     max-height: 100%;
 }
+.filepicker-content .file:hover span,
 .filearchive .file:hover span {
     opacity: 0.7;
+}
+
+.filepicker-content .selected {
+    background: #E2EEFF;
+}
+
+.filepicker-pickedfile {
+    padding: 10px 0;
+    overflow: hidden;
+}
+.filepicker-pickedfile .item {
+    display: block;
+    float:left;
+    max-height: 150px;
+}
+.filepicker-pickedfile-extra .item {
+    width: 7.5%;
+}
+.filepicker-pickedfile .item .image {
+    display: block;
+    overflow: hidden;
+}
+.filepicker-pickedfile .item .image img {
+    max-width: 100%;
+    max-height: 100%;
+}
+.filepicker-pickedfile .details {
+    display: block;
+    float: left;
+    max-height: 150px;
+}
+.filepicker-pickedfile-extra .details {
+    width: 90.5%;
+    margin-left: 2%;
 }

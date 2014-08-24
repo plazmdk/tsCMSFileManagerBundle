@@ -64,13 +64,3 @@
     </div>
 
 {% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    {% stylesheets
-        'bundles/tscmsfilemanager/css/filearchive.css'
-        filter='cssrewrite'
-    %}
-    <link href="{{ asset_url }}" rel="stylesheet" type="text/css" />
-    {% endstylesheets %}
-{% endblock %}

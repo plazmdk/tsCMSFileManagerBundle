@@ -6,3 +6,8 @@ filemanager:
 
   createDirectory: Opret mappe
   directory: Mappenavn
+
+filepicker:
+  selectfiles: Vælg filer
+  selectimages: Vælg billeder
+  close: Luk
