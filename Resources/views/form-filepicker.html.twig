@@ -1,4 +1,4 @@
-{% block filepicker_widget %}
+{% block tscms_filepicker_multiple_widget %}
     {% import _self as filepicker %}
     {% macro file_prototype(file,image,extraInfo) %}
         {% spaceless %}
@@ -43,18 +43,34 @@
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ "filepicker.close"|trans }}</span></button>
                         <h4 class="modal-title">{{ buttontext|trans }}</h4>
+
+                        <div id="filepicker_{{ form.vars.name }}_context">
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#rename" tabindex="-1" class="rename">{{ "filepicker.rename"|trans }}</a></li>
+                                <li><a href="#delete" tabindex="-1" class="delete">{{ "filepicker.delete"|trans }}</a></li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="modal-body filepicker-content">
                         <div class="spinner"></div>
                     </div>
                     <div class="modal-footer">
+                        <span class="btn btn-success filepicker-upload-button">
+                            <span>{{ "filepicker.upload"|trans }}</span>
+                            <input type="file" name="files[]" multiple class="filepicker-upload"
+                               data-url="{{ path("tscms_filemanager_filemanager_upload") }}"
+                               data-form-data='{"directory": "/"}'/>
+                        </span>
+                        <span class="btn btn-default filepicker-createfolder">
+                            <span>{{ "filepicker.createfolder"|trans }}</span>
+                        </span>
                         <button type="button" class="btn btn-primary" data-dismiss="modal">{{ "filepicker.close"|trans }}</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <ul class="filepicker-pickedfiles">
+        <ul class="filepicker-pickedfiles{% if sortable %} filepicker-pickedfiles-sortable{% endif %}">
             {% for child in form %}
                 {{ filepicker.file_prototype(child,image,extraInfo) }}
             {% endfor %}

@@ -1,13 +1,11 @@
-filemanager:
-  uploadFiles: Upload filer til mappe
-  chooseFiles: Vælg filer til upload
-  upload: Upload filer
-  name: Filarkiv
-
-  createDirectory: Opret mappe
-  directory: Mappenavn
-
 filepicker:
   selectfiles: Vælg filer
   selectimages: Vælg billeder
   close: Luk
+  upload: Upload filer
+  createfolder: Opret mappe
+  rename: Omdøb
+  delete: Slet
+  confirmDelete: Er du sikker på at du vil slette?
+  confirmYes: Ja
+  confirmNo: Nej

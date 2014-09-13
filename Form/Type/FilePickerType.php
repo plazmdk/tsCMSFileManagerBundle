@@ -63,6 +63,7 @@ class FilePickerType extends AbstractType
     {
         $view->vars['prototype'] = $form->getConfig()->getAttribute('prototype')->createView($view);
         $view->vars['image'] = $options['image'];
+        $view->vars['sortable'] = isset($options['positionField']);
         $view->vars['extraInfo'] = $options['titleField'] || $options['descriptionField'];
         $view->vars['buttontext'] = $options['buttontext'] == "filepicker.selectfiles" && $options['image'] ? "filepicker.selectimages" : $options['buttontext'];
     }
@@ -74,6 +75,6 @@ class FilePickerType extends AbstractType
      */
     public function getName()
     {
-        return "filepicker";
+        return "tscms_filepicker_multiple";
     }
 }

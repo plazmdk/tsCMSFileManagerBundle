@@ -12,112 +12,14 @@ use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * @Route("/filemanager")
  */
 class FileManagerController extends Controller
 {
-
-    /**
-     * @Route("")
-     * @Secure("ROLE_ADMIN")
-     * @Template()
-     */
-    public function indexAction(Request $request)
-    {
-        $webPath = $this->get('kernel')->getRootDir() . '/../web';
-        $dir = $request->query->get("dir");
-        $pathParts = $this->generateDirectoryCrumbs($dir);
-        $path = $webPath."/upload/".$dir;
-
-        if ($dir) {
-            $dir .= "/";
-        }
-
-
-        $form = $this->createFormBuilder()
-            ->add("files","file",array(
-                "label" => "filemanager.chooseFiles",
-                "attr" => array(
-                    "multiple" => true
-                )
-            ))
-            ->add("save","submit",array(
-                "label" => "filemanager.upload"
-            ))
-            ->setAction($this->generateUrl("tscms_filemanager_filemanager_index",array("dir" => $request->query->get("dir"))))
-            ->getForm();
-        $form->handleRequest($request);
-
-
-        if ($form->isValid()) {
-            /** @var UploadedFile[] $uploadedImages */
-            $uploadedImages = $form->getData()['files'];
-            foreach($uploadedImages as $uploadedImage) {
-                if ($uploadedImage) {
-                    $uploadedImage->move($path."/",$uploadedImage->getClientOriginalName());
-                }
-            }
-            return $this->redirect($this->generateUrl("tscms_filemanager_filemanager_index",array("dir" => $request->query->get("dir"))));
-        }
-
-        $directoryForm = $this->createFormBuilder()
-            ->add("directory","text",array(
-                "label" => "filemanager.directory"
-            ))
-            ->add("save", "submit",array(
-                "label" => "filemanager.createDirectory"
-            ))
-            ->setAction($this->generateUrl("tscms_filemanager_filemanager_index",array("dir" => $request->query->get("dir"))))
-            ->getForm();
-        $directoryForm->handleRequest($request);
-
-        if ($directoryForm->isValid()) {
-            $fs = new Filesystem();
-            try {
-                $fs->mkdir($path."/".$directoryForm->getData()['directory']);
-            } catch(\Exception $e) {
-
-            }
-
-            return $this->redirect($this->generateUrl("tscms_filemanager_filemanager_index",array("dir" => $request->query->get("dir"))));
-        }
-
-        $directoryFinder = new Finder();
-        $fileFinder = new Finder();
-
-
-        $directories = $directoryFinder->depth('== 0')->directories()->sortByName()->in($path);
-        $files = $fileFinder->depth('== 0')->files()->sortByName()->in($path);
-
-        return array(
-            "pathParts" => $pathParts,
-            "currentDirectory" => $dir,
-            "directories" => $directories,
-            "files" => $files,
-            "form" => $form->createView(),
-            "directoryForm" => $directoryForm->createView()
-        );
-    }
-
-    private function generateDirectoryCrumbs($path) {
-        if ($path == "") {
-            return array();
-        }
-
-        $split = explode("/", $path);
-        $result = array();
-
-        $path = "";
-        for ($i = 0, $c = count($split); $i < $c; $i++) {
-            $path = $path ? $path . "/" . $split[$i] : $split[$i];
-            $result[$path] = $split[$i];
-        }
-
-
-        return $result;
-    }
+    public function indexAction() {}
 
     /**
      * @Route("/images/json", name="tscms_filemanager_filemanager_listimages", options={"expose"=true})
@@ -198,5 +100,86 @@ class FileManagerController extends Controller
             "directories" => $directories,
             "files" => $files
         ));
+    }
+
+    /**
+     * @Route("/upload")
+     * @Secure("ROLE_ADMIN")
+     */
+    public function uploadAction(Request $request) {
+        $webPath = realpath($this->get('kernel')->getRootDir() . '/../web/upload');
+        $directory = $request->request->get("directory");
+
+        $destination = realpath($webPath.$directory);
+        if (strpos($destination,$webPath) === false) {
+            throw new AccessDeniedException("Malicious access to directory");
+        }
+
+        /** @var UploadedFile $file */
+        $file = $request->files->get("files")[0];
+
+        $file->move($destination,$file->getClientOriginalName());
+
+        return new JsonResponse();
+    }
+
+    /**
+     * @Route("/createfolder", name="tscms_filemanager_filepicker_createfolder", options={"expose"=true})
+     * @Secure("ROLE_ADMIN")
+     */
+    public function createFolderAction(Request $request) {
+        $webPath = realpath($this->get('kernel')->getRootDir() . '/../web/upload');
+        $directory = $request->request->get("directory");
+        $name = $request->request->get("name");
+
+        $destination = realpath($webPath.$directory)."/".$name;
+        if (strpos($destination,$webPath) === false || strpos($name,"..") !== false) {
+            throw new AccessDeniedException("Malicious access to directory");
+        }
+
+        $fs = new Filesystem();
+        $fs->mkdir($destination);
+
+        return new JsonResponse();
+    }
+
+    /**
+     * @Route("/rename", name="tscms_filemanager_filepicker_rename", options={"expose"=true})
+     * @Secure("ROLE_ADMIN")
+     */
+    public function renameAction(Request $request) {
+        $webPath = realpath($this->get('kernel')->getRootDir() . '/../web/upload');
+        $path = $request->request->get("path");
+        $name = $request->request->get("name");
+
+        $source = realpath($webPath.$path);
+        $destination = dirname($source)."/".$name;
+        if (strpos($source,$webPath) === false || strpos($destination,$webPath) === false || strpos($name,"..") !== false) {
+            throw new AccessDeniedException("Malicious access to directory");
+        }
+
+        $fs = new Filesystem();
+        $fs->rename($source, $destination);
+
+        return new JsonResponse();
+    }
+
+    /**
+     * @Route("/delete", name="tscms_filemanager_filepicker_delete", options={"expose"=true})
+     * @Secure("ROLE_ADMIN")
+     */
+    public function deleteAction(Request $request) {
+        $webPath = realpath($this->get('kernel')->getRootDir() . '/../web/upload');
+        $path = $request->request->get("path");
+
+        $source = realpath($webPath.$path);
+        if (strpos($source,$webPath) === false) {
+            throw new AccessDeniedException("Malicious access to directory");
+        }
+
+        $fs = new Filesystem();
+        $fs->remove($source);
+
+        return new JsonResponse();
     }
 }

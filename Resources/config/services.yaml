@@ -1,10 +1,5 @@
 services:
-    tsCMS_filemanager.filemanagerservice:
-        class: tsCMS\FileManagerBundle\Services\FileManagerService
-        arguments: [ @doctrine.orm.entity_manager, @router ]
-        tags:
-            - { name: kernel.event_listener, event: tsCMS.buildSiteStructure, method: onBuildSitestructure, priority: 0 }
     tsCMS_filemanager.form.type.filepicker:
         class: tsCMS\FileManagerBundle\Form\Type\FilePickerType
         tags:
-            - { name: form.type, alias: filepicker }
+            - { name: form.type, alias: tscms_filepicker_multiple }
