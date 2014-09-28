@@ -2,6 +2,7 @@
 
 namespace tsCMS\FileManagerBundle\Controller;
 
+use Gregwar\Image\Image;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -32,9 +33,12 @@ class FileManagerController extends Controller
         $locator = new Finder();
         $locator->files()->in($webPath."/upload")->name('/.*\.(jpg|gif|png)/i');
 
+        /** @var Image $imageHandler */
+        $imageHandler = $this->get('image.handling');
         foreach ($locator as $image) { /** @var $image SplFileInfo */
+
             $images[] = array(
-                "thumb" => "/upload/".$image->getRelativePathname(),
+                "thumb" =>  $imageHandler->open("/upload/".$image->getRelativePathname())->cropResize(86,64),
                 "image" => "/upload/".$image->getRelativePathname(),
                 "title" => $image->getFilename(),
                 "folder" => $image->getRelativePath()
@@ -65,6 +69,9 @@ class FileManagerController extends Controller
         $locator->depth(0);
         $locator->in($webPath.$folder);
 
+        /** @var Image $imageHandler */
+        $imageHandler = $this->get('image.handling');
+
         foreach ($locator as $file) { /** @var $file SplFileInfo */
             if ($file->isDir()) {
                 $directories[] = array(
@@ -85,12 +92,16 @@ class FileManagerController extends Controller
                 }
 
                 if ($valid) {
-                    $files[] = array(
+                    $data = array(
                         "selected" => in_array(str_replace($webPath, "", $file->getPathname()), $selectedFiles),
                         "type" => $image ? 'image' : 'file',
                         "path" => str_replace($webPath, "", $file->getPathname()),
                         "title" => $file->getFilename()
                     );
+                    if ($image) {
+                        $data["thumb"] = (string)$imageHandler->open($file->getPathname())->cropResize(86,64);
+                    }
+                    $files[] = $data;
                 }
 
             }

@@ -101,7 +101,7 @@ function loadFilepickerData(filepicker, folder) {
             }
             if (file.type == "image") {
                 wrapper.append(
-                    $("<span/>").append($("<img/>").attr("src", "/upload"+file.path))
+                    $("<span/>").append($("<img/>").attr("src", file.thumb))
                 );
             } else {
                 wrapper.append($("<i class='fa fa-file'/>"));
