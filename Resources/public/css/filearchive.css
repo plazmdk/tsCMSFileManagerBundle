@@ -2,6 +2,11 @@
     margin: 20px 0;
 }
 
+.filepicker-content {
+    max-height: 500px;
+    overflow: auto;
+}
+
 .filepicker-content .directory,
 .filepicker-content .file,
 .filearchive .directory,
